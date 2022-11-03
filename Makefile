@@ -26,7 +26,7 @@ ${NAME} : ${OBJS}
 	make bonus -C libft
 	cp libft/libft.a .
 	# ar rcs $(NAME) $(OBJS)
-	$(CC) -L. -l ft  $(OBJS)
+	$(CC) -L. -l ft  $(OBJS) -o${NAME}
 
 all : ${NAME}
 

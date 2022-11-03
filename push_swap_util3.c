@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 09:02:58 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/03 16:12:04 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/03 17:22:19 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,6 @@ int	ft_count_elements(t_node *lst)
 	return (count);
 }
 
-int	ft_compare(int *v1, int *v2)
-{
-	if (*v1 < *v2)
-		return (-1);
-	if (*v1 > *v2)
-		return (1);
-	return (0);
-}
 
 void	ft_print_list(t_node *lst)
 {
@@ -64,14 +56,15 @@ void	ft_print_list(t_node *lst)
 }
 
 
-int	ft_compare_swap(t_node **lst, char *lst_name)
+int	ft_compare_swap_rotate(t_node **lst, char *lst_name)
 {
 	if ((*lst)->content > (*lst)->next->content)
 	{
-		ft_printf("sw%s\n", lst_name);
+		ft_printf("s%s\n", lst_name);
 		swap_first_two(lst);
-		return (0);
-	}
-	else
+		rotate_list(lst, lst_name);
 		return (1);
+	}
+	rotate_list(lst, lst_name);
+	return (0);
 }
