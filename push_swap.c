@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/03 18:50:27 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/03 19:00:15 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int	valid_arguments(int argc, char *argv[])
 			return (0);
 		index++;
 	}
-	index = 0;
+	index = 1;
 	while (index < argc - 1)
 	{
 		index2 = index + 1;
@@ -177,7 +177,7 @@ int	main(int argc, char *argv[])
 	ft_bubble_sort(lsta, "a");
 	ft_bubble_sort(lstb, "b");
 	ft_merge_lists(lsta, lstb);
-	ft_print_list(*lsta);
+	//ft_print_list(*lsta);
 	ft_delete_lst(lsta);
 	ft_delete_lst(lstb);
 	return (1);
