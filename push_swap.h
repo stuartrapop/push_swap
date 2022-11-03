@@ -6,17 +6,32 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:41 by srapopor          #+#    #+#             */
-/*   Updated: 2022/10/30 13:32:39 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/03 16:10:50 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
-t_list	*ft_remove_and_return_first(t_list **lst);
-t_list	*ft_remove_and_return_last(t_list **lst);
-void	swap_first_two(t_list **lst);
-void	rotate_list(t_list **lst);
-void	rotate_reverse_list(t_list **lst);
+typedef struct s_node
+{
+	int				content;
+	struct s_node	*next;
+	struct s_node	*prev;
+}	t_node;
+
+t_node	*ft_remove_and_return_first(t_node **lst);
+t_node	*ft_remove_and_return_last(t_node **lst);
+void	ft_add_front(t_node **lst, t_node *new);
+void	ft_add_back(t_node **lst, t_node *new);
+void	swap_first_two(t_node **lst);
+void	rotate_list(t_node **lst, char *lst_name);
+void	rotate_reverse_list(t_node **lst, char *lst_name);
+void	ft_delete_lst(t_node **lst);
+t_node	*ft_create_node(int number);
+int		ft_count_elements(t_node *lst);
+int		ft_compare(int *v1, int *v2);
+void	ft_print_list(t_node *lst);
+int		ft_compare_swap(t_node **lst, char *lst_name);
 
 #endif

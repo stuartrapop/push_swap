@@ -6,129 +6,119 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/02 08:24:01 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/03 16:21:56 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include <stdarg.h>
 #include "libft/libft.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include "push_swap.h"
+#include "ft_printf.h"
 #include <limits.h>
 
-t_list	*ft_create_element(int number)
+void	ft_merge_lists(t_node **lsta, t_node **lstb)
 {
-	t_list	*new_element;
-	// int		*new_value;
-	printf("%d", number);
+	int	position;
+	int	lsta_length;
+	int	lstb_length;
+	int	end_rotate;
 
-	new_element = malloc(sizeof(t_list));
-	// new_value = malloc(sizeof(int *));
-	// *new_value = number;
-	new_element->content = NULL;
-	new_element->next = NULL;
-	return (new_element);
-}
-
-int	ft_compare(int *v1, int *v2)
-{
-	if (*v1 < *v2)
-		return (-1);
-	if (*v1 > *v2)
-		return (1);
-	return (0);
-}
-
-void	ft_print_list(t_list *lst)
-{
-	int	*number;
-
-	while (lst != NULL)
+	end_rotate = 0;
+	position = 0;
+	lsta_length = ft_count_elements(*lsta);
+	lstb_length = ft_count_elements(*lstb);
+	while (*lstb != NULL)
 	{
-		number = (int *)(lst)->content;
-		printf("number %d\n", *number);
-		(lst) = (lst)->next;
+		if ((*lsta)->content < (*lstb)->content && position <= lsta_length + 1)
+		{
+			rotate_list(lsta, "a");
+			position++;
+		}
+		else
+		{
+			ft_add_front(lsta, ft_remove_and_return_first(lstb));
+			rotate_list(lsta, "a");
+			ft_printf("pa\n");
+		}
+	}
+	while (position < lsta_length)
+	{
+		rotate_list(lsta, "a");
+		position++;
 	}
 }
 
-int	ft_bubble_sort(t_list **lst)
+int	ft_bubble_sort(t_node **lst, char *lst_name)
 {
-	int		start_number;
+	int		index;
+	int		list_length;
 	int		sorted;
-	int		*v1;
-	int		*v2;
-	int		end_loop;
 
 	if (*lst == NULL || (*lst)->next == NULL)
-		return (1);
+		return (0);
+	list_length = ft_count_elements(*lst);
 	sorted = 0;
 	while (sorted == 0)
 	{
-		v1 = (int *)(*lst)->content;
-		v2 = (int *)(*lst)->next->content;
-		printf("v1: %d, v2 %d\n", *v1, *v2);
 		sorted = 1;
-		if (*v1 > *v2)
+		index = 0;
+		while (index < (list_length - 1))
 		{
-			sorted = 0;
-			swap_first_two(lst);
+			sorted = ft_compare_swap(lst, lst_name);
+			rotate_list(lst, lst_name);
+			index++;
 		}
-		start_number = *(int *)(*lst)->content;
-		rotate_list(lst);
-		ft_print_list(*lst);
-		end_loop = 0;
-		while (!end_loop)
-		{
-			v1 = (int *)(*lst)->content;
-			v2 = (int *)(*lst)->next->content;
-			printf("v1: %d, v2 %d\n", *v1, *v2);
-			if (*(int *)((*lst)->content) == start_number)
-			{
-				end_loop = 1;
-				break ;
-				printf("end loop %d\n", start_number);
-			}
-			if (*v1 > *v2)
-			{
-				sorted = 0;
-				swap_first_two(lst);
-			}
-			printf("list address before rotate %p\n", *lst);
-			printf("first element before rotate %d\n", *(int *)(*lst)->content);
-			rotate_list(lst);
-			printf("list address after rotate %p\n", *lst);
-			printf("first element after rotate %d\n", *(int *)(*lst)->content);
-			printf("start nznber %d\n", start_number);
-		}
-	}	
+		rotate_list(lst, lst_name);
+	}
 	return (1);
 }
-
-
 
 int	main(int argc, char *argv[])
 {
 	int		index;
-	t_list	**lst;
-	t_list	*new_element;
-	int		*number;
+	t_node	**lsta;
+	t_node	**lstb;
+	t_node	*new_element;
+	int		number_elements;
 
 	index = 1;
-	lst = malloc(sizeof(t_list *));
-	*lst = NULL;
+	lsta = malloc(sizeof(t_node *));
+	if (!lsta)
+		return (0);
+	*lsta = NULL;
+	lstb = malloc(sizeof(t_node *));
+	if (!lstb)
+		return (0);
+	*lstb = NULL;
 	if (argc < 2)
 		return (0);
 	while (index < argc)
 	{
-		number = malloc(sizeof(int));
-		(*number) = ft_atoi(argv[index]);
-		new_element = ft_lstnew(number);
-		ft_lstadd_back(lst, new_element);
+		new_element = ft_create_node(ft_atoi(argv[index]));
+		ft_add_back(lsta, new_element);
 		index++;
 	}
-	ft_bubble_sort(lst);
-	// ft_print_list(*lst);
+	number_elements = ft_count_elements(*lsta);
+	index = 0;
+	while (index < number_elements / 2)
+	{
+		ft_add_front(lstb, ft_remove_and_return_first(lsta));
+		ft_printf("pb\n");
+		index++;
+	}
+	ft_bubble_sort(lsta, "a");
+	ft_printf("list a \n");
+	ft_print_list(*lsta);
+	ft_printf("list b before sort \n");
+	ft_print_list(*lstb);
+	ft_bubble_sort(lstb, "b");
+	ft_printf("list b after sort \n");
+	ft_print_list(*lstb);
+	ft_merge_lists(lsta, lstb);
+	ft_print_list(*lsta);
+	ft_delete_lst(lsta);
+	ft_delete_lst(lstb);
 	return (1);
 }

@@ -6,19 +6,19 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 09:02:58 by srapopor          #+#    #+#             */
-/*   Updated: 2022/10/30 15:09:47 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/03 15:19:54 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "ft_printf.h"
 #include <stdarg.h>
 #include "libft/libft.h"
 #include <unistd.h>
 #include "push_swap.h"
 
-t_list	*ft_remove_and_return_first(t_list **lst)
+t_node	*ft_remove_and_return_first(t_node **lst)
 {
-	t_list	*first_element;
+	t_node	*first_element;
 
 	if (*lst == NULL)
 		return (NULL);
@@ -31,10 +31,10 @@ t_list	*ft_remove_and_return_first(t_list **lst)
 	return (first_element);
 }
 
-t_list	*ft_remove_and_return_last(t_list **lst)
+t_node	*ft_remove_and_return_last(t_node **lst)
 {
-	t_list	*last_element;
-	t_list	*current;
+	t_node	*last_element;
+	t_node	*current;
 
 	if (*lst == NULL)
 		return (NULL);
@@ -52,9 +52,9 @@ t_list	*ft_remove_and_return_last(t_list **lst)
 	return (last_element);
 }
 
-void	swap_first_two(t_list **lst)
+void	swap_first_two(t_node **lst)
 {
-	t_list	*tmp;
+	t_node	*tmp;
 
 	if (*lst == NULL)
 		return ;
@@ -64,24 +64,4 @@ void	swap_first_two(t_list **lst)
 	*lst = (*lst)->next;
 	tmp->next = (*lst)->next;
 	(*lst)->next = tmp;
-}
-
-void	rotate_list(t_list **lst)
-{
-	t_list	*item_to_append;
-
-	item_to_append = ft_remove_and_return_first(lst);
-	if (item_to_append == NULL)
-		return ;
-	ft_lstadd_back(lst, item_to_append);
-}
-
-void	rotate_reverse_list(t_list **lst)
-{
-	t_list	*item_to_append;
-
-	item_to_append = ft_remove_and_return_last(lst);
-	if (item_to_append == NULL)
-		return ;
-	ft_lstadd_front(lst, item_to_append);
 }

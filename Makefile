@@ -4,7 +4,7 @@ SRCS_PATH =./
 
 OBJS_PATH = ./objects
 
-SRCS_NAME = push_swap.c push_swap_util.c
+SRCS_NAME = push_swap.c push_swap_util.c push_swap_util2.c push_swap_util3.c ft_printf.c ft_printf_utils.c
 
 
 SRCS = $(addprefix $(SRCS_PATH)/,$(SRCS_NAME))
@@ -26,7 +26,7 @@ ${NAME} : ${OBJS}
 	make bonus -C libft
 	cp libft/libft.a .
 	# ar rcs $(NAME) $(OBJS)
-	$(CC) -L. -l ft  $(OBJS) 
+	$(CC) -L. -l ft  $(OBJS)
 
 all : ${NAME}
 
