@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/03 19:00:15 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/04 13:57:27 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,58 +20,57 @@
 
 void	ft_merge_lists(t_node **lsta, t_node **lstb)
 {
-	int	position;
-	int	lsta_length;
-	int	lstb_length;
-	int	end_rotate;
+	int	max_value_a;
+	int	only_b;
 
-	end_rotate = 0;
-	position = 0;
-	lsta_length = ft_count_elements(*lsta);
-	lstb_length = ft_count_elements(*lstb);
+	max_value_a = ft_max_value(*lsta);
+	only_b = 0;
+	if ((*lsta)->content < (*lstb)->content)
+		(*lstb)->first_element = 0;
+	else
+		(*lsta)->first_element = 0;
 	while (*lstb != NULL)
 	{
-		if ((*lsta)->content < (*lstb)->content && position <= lsta_length + 1)
+		if ((*lsta)->content < (*lstb)->content && !only_b)
 		{
-			rotate_list(lsta, "a");
-			position++;
+			if ((*lsta)->content == max_value_a)
+				only_b = 1;
 		}
 		else
 		{
 			ft_add_front(lsta, ft_remove_and_return_first(lstb));
-			rotate_list(lsta, "a");
 			ft_printf("pa\n");
 		}
-	}
-	while (position < lsta_length)
-	{
 		rotate_list(lsta, "a");
-		position++;
 	}
+	while ((*lsta)->first_element != 1)
+		rotate_list(lsta, "a");
 }
 
 int	ft_bubble_sort(t_node **lst, char *lst_name)
 {
-	int		index;
-	int		list_length;
 	int		sorted;
+	int		num_sorted;
 
-	if (*lst == NULL || (*lst)->next == NULL)
+	if (*lst == NULL)
 		return (0);
-	list_length = ft_count_elements(*lst);
+	if ((*lst)->next == NULL)
+	{
+		(*lst)->first_element = 1;
+		return (1);
+	}
 	sorted = 0;
+	num_sorted = 0;
 	while (sorted == 0)
 	{
 		sorted = 1;
-		index = 0;
-		while (index < (list_length - 1))
-		{
-			if (ft_compare_swap_rotate(lst, lst_name))
-				sorted = 0;
-			index++;
-		}
-		rotate_list(lst, lst_name);
+		if (ft_compare_swap_rotate(lst, lst_name, "greater", num_sorted))
+			sorted = 0;
+		if (ft_compare_swap_rotate(lst, lst_name, "smaller", num_sorted))
+			sorted = 0;
+		num_sorted++;
 	}
+	(*lst)->first_element = 1;
 	return (1);
 }
 
@@ -166,7 +165,6 @@ int	main(int argc, char *argv[])
 		index++;
 	}
 	number_elements = ft_count_elements(*lsta);
-
 	index = 0;
 	while (index < number_elements / 2)
 	{
@@ -174,10 +172,17 @@ int	main(int argc, char *argv[])
 		ft_printf("pb\n");
 		index++;
 	}
+	ft_printf("list a\n");
+	ft_print_list(*lsta);
 	ft_bubble_sort(lsta, "a");
-	ft_bubble_sort(lstb, "b");
-	ft_merge_lists(lsta, lstb);
-	//ft_print_list(*lsta);
+	ft_printf("list a\n");
+	ft_print_list(*lsta);
+	// ft_bubble_sort(lstb, "b");
+	// ft_printf("list b\n");
+	// 	ft_print_list(*lstb);
+	// if (*lstb != NULL)
+	// 	ft_merge_lists(lsta, lstb);
+	// ft_print_list(*lsta);
 	ft_delete_lst(lsta);
 	ft_delete_lst(lstb);
 	return (1);

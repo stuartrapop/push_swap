@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: stuartrapoport <stuartrapoport@student.    +#+  +:+       +#+        */
+/*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 13:59:31 by stuartrapop       #+#    #+#             */
-/*   Updated: 2022/09/12 19:48:27 by stuartrapop      ###   ########.fr       */
+/*   Updated: 2022/11/04 13:11:44 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ static int	ft_isspace(char c)
 
 int	ft_atoi(const char *str)
 {
-	int	index;
-	int	sign;
-	int	value;
+	int		index;
+	int		sign;
+	long	value;
 
 	index = 0;
 	sign = 1;
@@ -38,10 +38,6 @@ int	ft_atoi(const char *str)
 	}
 	while (ft_isdigit(str[index]))
 	{
-		if (value >= -INT32_MIN / 10 && sign == -1 && str[index] > '8')
-			return (0);
-		if (value >= INT32_MAX / 10 && sign == 1 && str[index] > '7')
-			return (-1);
 		value = value * 10 + str[index] - '0';
 		index++;
 	}
