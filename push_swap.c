@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/04 13:57:27 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/04 18:19:05 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,84 +18,25 @@
 #include "ft_printf.h"
 #include <limits.h>
 
-void	ft_merge_lists(t_node **lsta, t_node **lstb)
-{
-	int	max_value_a;
-	int	only_b;
-
-	max_value_a = ft_max_value(*lsta);
-	only_b = 0;
-	if ((*lsta)->content < (*lstb)->content)
-		(*lstb)->first_element = 0;
-	else
-		(*lsta)->first_element = 0;
-	while (*lstb != NULL)
-	{
-		if ((*lsta)->content < (*lstb)->content && !only_b)
-		{
-			if ((*lsta)->content == max_value_a)
-				only_b = 1;
-		}
-		else
-		{
-			ft_add_front(lsta, ft_remove_and_return_first(lstb));
-			ft_printf("pa\n");
-		}
-		rotate_list(lsta, "a");
-	}
-	while ((*lsta)->first_element != 1)
-		rotate_list(lsta, "a");
-}
-
-int	ft_bubble_sort(t_node **lst, char *lst_name)
-{
-	int		sorted;
-	int		num_sorted;
-
-	if (*lst == NULL)
-		return (0);
-	if ((*lst)->next == NULL)
-	{
-		(*lst)->first_element = 1;
-		return (1);
-	}
-	sorted = 0;
-	num_sorted = 0;
-	while (sorted == 0)
-	{
-		sorted = 1;
-		if (ft_compare_swap_rotate(lst, lst_name, "greater", num_sorted))
-			sorted = 0;
-		if (ft_compare_swap_rotate(lst, lst_name, "smaller", num_sorted))
-			sorted = 0;
-		num_sorted++;
-	}
-	(*lst)->first_element = 1;
-	return (1);
-}
-
 int	valid_argument(char *string, int *ret)
 {
-	int		index;
 	long	number;
 	int		sign;
 
-	index = 0;
 	number = 0;
 	sign = 1;
-
-	if (string[index] == '-' || string[index] == '+')
+	if (*string == '-' || *string == '+')
 	{
-		if (string[index] == '-')
+		if (*string == '-')
 			sign = -1;
-		index++;
+		string++;
 	}
-	while (string[index] != '\0')
+	while (*string != '\0')
 	{
-		if (!ft_isdigit(string[index]))
+		if (!ft_isdigit(*string))
 			return (0);
-		number = number * 10 + string[index] - '0';
-		index++;
+		number = number * 10 + *string - '0';
+		string++;
 	}
 	number = number * sign;
 	if (number < INT_MIN || number > INT_MAX)
@@ -134,23 +75,83 @@ int	valid_arguments(int argc, char *argv[])
 	return (1);
 }
 
+void	ft_simple_sort(int *list, int length)
+{
+	int	index1;
+	int	index2;
+	int	tmp;
+
+	index1 = 0;
+	index2 = 0;
+	while (index1 < length - 1)
+	{
+		index2 = index1 + 1;
+		while (index2 < length)
+		{
+			if (list[index1] < list[index2])
+			{
+				tmp = list[index1];
+				list[index1] = list[index2];
+				list[index2] = tmp;
+			}
+			index2++;
+		}
+		index1++;
+	}
+}
+
+void	ft_get_list_stats(t_num_list list)
+{
+	int	min;
+	int	max;
+	int	index;
+
+	if (list.number_elements == 0 || list.elements == NULL)
+		return ;
+	index = 0;
+	min = list.elements[0];
+	max = list.elements[0];
+	while (index < list.number_elements)
+	{
+		if (min > list.elements[index])
+			min = list.elements[index];
+		if (max < list.elements[index])
+			max = list.elements[index];
+		index++;
+	}
+	ft_simple_sort(list.sorted_elements, list.number_elements);
+	list.median = (list.sorted_elements[list.number_elements / 2 + 1]);
+}
+
+int	ft_read_elements(t_num_list *lista, int argc, char *argv[], char identifier)
+{
+	int	index;
+
+	(*lista).elements = malloc(sizeof(int) * argc);
+	if (!((*lista).elements))
+		return (0);
+	(*lista).sorted_elements = malloc(sizeof(int) * argc);
+	if (!((*lista).sorted_elements))
+		return (0);
+	(*lista).identifier = identifier;
+	(*lista).number_elements = argc -1;
+	index = argc ;
+	while (index > 1)
+	{
+		ft_printf("in function%d \n", index);
+
+		(*lista).elements[index - 2] = ft_atoi(argv[index - 1]);
+		(*lista).sorted_elements[index - 2] = ft_atoi(argv[index - 1]);
+		ft_printf("value %d:\n", (*lista).elements[index - 1]);
+		index--;
+	}
+	return (1);
+}
+
 int	main(int argc, char *argv[])
 {
-	int		index;
-	t_node	**lsta;
-	t_node	**lstb;
-	t_node	*new_element;
-	int		number_elements;
+	t_num_list	lista;
 
-	index = 1;
-	lsta = malloc(sizeof(t_node *));
-	if (!lsta)
-		return (0);
-	*lsta = NULL;
-	lstb = malloc(sizeof(t_node *));
-	if (!lstb)
-		return (0);
-	*lstb = NULL;
 	if (argc < 2)
 		return (0);
 	if (!valid_arguments(argc, argv))
@@ -158,32 +159,9 @@ int	main(int argc, char *argv[])
 		ft_printf("Error\n");
 		return (0);
 	}
-	while (index < argc)
-	{
-		new_element = ft_create_node(ft_atoi(argv[index]));
-		ft_add_back(lsta, new_element);
-		index++;
-	}
-	number_elements = ft_count_elements(*lsta);
-	index = 0;
-	while (index < number_elements / 2)
-	{
-		ft_add_front(lstb, ft_remove_and_return_first(lsta));
-		ft_printf("pb\n");
-		index++;
-	}
-	ft_printf("list a\n");
-	ft_print_list(*lsta);
-	ft_bubble_sort(lsta, "a");
-	ft_printf("list a\n");
-	ft_print_list(*lsta);
-	// ft_bubble_sort(lstb, "b");
-	// ft_printf("list b\n");
-	// 	ft_print_list(*lstb);
-	// if (*lstb != NULL)
-	// 	ft_merge_lists(lsta, lstb);
-	// ft_print_list(*lsta);
-	ft_delete_lst(lsta);
-	ft_delete_lst(lstb);
-	return (1);
+	lista.elements = NULL;
+	
+	ft_read_elements(&lista, argc, argv, 'a');
+	ft_print_list(lista.elements, lista.number_elements);
+	ft_get_list_stats(lista);
 }

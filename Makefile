@@ -4,7 +4,7 @@ SRCS_PATH =./
 
 OBJS_PATH = ./objects
 
-SRCS_NAME = push_swap.c push_swap_util.c push_swap_util2.c push_swap_util3.c push_swap_util4.c ft_printf.c ft_printf_utils.c 
+SRCS_NAME = push_swap.c push_swap_util.c  ft_printf.c ft_printf_utils.c 
 
 
 SRCS = $(addprefix $(SRCS_PATH)/,$(SRCS_NAME))
