@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/04 18:19:05 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/06 17:39:00 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,131 +18,193 @@
 #include "ft_printf.h"
 #include <limits.h>
 
-int	valid_argument(char *string, int *ret)
-{
-	long	number;
-	int		sign;
-
-	number = 0;
-	sign = 1;
-	if (*string == '-' || *string == '+')
-	{
-		if (*string == '-')
-			sign = -1;
-		string++;
-	}
-	while (*string != '\0')
-	{
-		if (!ft_isdigit(*string))
-			return (0);
-		number = number * 10 + *string - '0';
-		string++;
-	}
-	number = number * sign;
-	if (number < INT_MIN || number > INT_MAX)
-		return (0);
-	*ret = (int)number;
-	return (1);
-}
-/* check valid integers and non duplicates
-*/
-
-int	valid_arguments(int argc, char *argv[])
-{
-	int	index;
-	int	index2;
-	int	number;
-
-	index = 1;
-	while (index < argc)
-	{
-		if (!valid_argument(argv[index], &number))
-			return (0);
-		index++;
-	}
-	index = 1;
-	while (index < argc - 1)
-	{
-		index2 = index + 1;
-		while (index2 < argc)
-		{
-			if (ft_atoi(argv[index]) == ft_atoi(argv[index2]))
-				return (0);
-			index2++;
-		}
-		index++;
-	}
-	return (1);
-}
-
-void	ft_simple_sort(int *list, int length)
-{
-	int	index1;
-	int	index2;
-	int	tmp;
-
-	index1 = 0;
-	index2 = 0;
-	while (index1 < length - 1)
-	{
-		index2 = index1 + 1;
-		while (index2 < length)
-		{
-			if (list[index1] < list[index2])
-			{
-				tmp = list[index1];
-				list[index1] = list[index2];
-				list[index2] = tmp;
-			}
-			index2++;
-		}
-		index1++;
-	}
-}
-
-void	ft_get_list_stats(t_num_list list)
+void	ft_get_list_stats(t_num_list *list)
 {
 	int	min;
 	int	max;
 	int	index;
 
-	if (list.number_elements == 0 || list.elements == NULL)
+	if ((*list).number_elements == 0 || (*list).elements == NULL)
 		return ;
 	index = 0;
-	min = list.elements[0];
-	max = list.elements[0];
-	while (index < list.number_elements)
+	min = (*list).elements[0];
+	max = (*list).elements[0];
+	while (index < (*list).number_elements)
 	{
-		if (min > list.elements[index])
-			min = list.elements[index];
-		if (max < list.elements[index])
-			max = list.elements[index];
+		if (min > (*list).elements[index])
+			min = (*list).elements[index];
+		if (max < (*list).elements[index])
+			max = (*list).elements[index];
 		index++;
 	}
-	ft_simple_sort(list.sorted_elements, list.number_elements);
-	list.median = (list.sorted_elements[list.number_elements / 2 + 1]);
+	(*list).max_value = max;
+	(*list).min_value = min;
 }
 
-int	ft_read_elements(t_num_list *lista, int argc, char *argv[], char identifier)
+void	ft_add_number(t_num_list *list, int new_number)
+{
+	int	index;
+
+	index = list->number_elements;
+	while (index > 0)
+	{
+		list->elements[index] = list->elements[index - 1];
+		index--;
+	}
+	list->elements[0] = new_number;
+	list->number_elements++;
+	ft_get_list_stats(list);
+}
+
+int	ft_remove_number(t_num_list *list)
+{
+	int	index;
+	int	tmp;
+
+	index = 0;
+	tmp = list->elements[0];
+	while (index < list->number_elements - 1)
+	{
+		list->elements[index] = list->elements[index + 1];
+		index++;
+	}
+	list->number_elements--;
+	ft_get_list_stats(list);
+	ft_printf("remove number %d\n", tmp);
+	return (tmp);
+}
+
+void	ft_push(t_num_list *list1, t_num_list *list2)
+{
+	if (list1 == NULL || list2 == NULL)
+		return ;
+	if (list1->number_elements < 1)
+		return ;
+	ft_add_number(list2, ft_remove_number(list1));
+}
+
+void	ft_rotate_elements(t_num_list *list, int show_instruction)
+{
+	int	tmp;
+	int	index;
+
+	index = 0;
+	if ((*list).number_elements == 0 || (*list).elements == NULL)
+		return ;
+	tmp = (*list).elements[0];
+	while (index < (*list).number_elements - 1)
+	{
+		(*list).elements[index] = (*list).elements[index + 1];
+		index++;
+	}
+	(*list).elements[(*list).number_elements - 1] = tmp;
+	if (show_instruction)
+		ft_printf("r%c\n", (*list).identifier);
+}
+
+void	ft_rotate_both(t_num_list *list1, t_num_list *list2)
+{
+	ft_rotate_elements(list1, 0);
+	ft_rotate_elements(list2, 0);
+	ft_printf("rr\n");
+}
+
+void	ft_reverse_rotate_elements(t_num_list *list, int show_instruction)
+{
+	int	tmp;
+	int	index;
+
+	if ((*list).number_elements == 0 || (*list).elements == NULL)
+		return ;
+	tmp = (*list).elements[(*list).number_elements - 1];
+	index = (*list).number_elements - 1;
+	while (index > 0)
+	{
+		(*list).elements[index] = (*list).elements[index - 1];
+		index--;
+	}
+	(*list).elements[0] = tmp;
+	if (show_instruction)
+		ft_printf("rr%c\n", (*list).identifier);
+}
+
+void	ft_reverse_rotate_both(t_num_list *list1, t_num_list *list2)
+{
+	ft_reverse_rotate_elements(list1, 0);
+	ft_reverse_rotate_elements(list2, 0);
+	ft_printf("rrr\n");
+}
+
+void	ft_swap_first_2(t_num_list *list)
+{
+	int	tmp;
+
+	if (list == NULL)
+		return ;
+	if (list->number_elements < 2)
+		return ;
+	tmp = list->elements[0];
+	list->elements[0] = list->elements[1];
+	list->elements[1] = tmp;
+	ft_printf("s%c\n", list->identifier);
+}
+
+void	ft_sort_less_3(t_num_list *list)
+{
+	if (list->elements[0] == list->max_value)
+		ft_rotate_elements(list, 1);
+	if (is_sorted_list(list->elements, list->number_elements))
+		return ;
+	if (list->elements[1] == list->max_value)
+		ft_reverse_rotate_elements(list, 1);
+	if (is_sorted_list(list->elements, list->number_elements))
+		return ;
+	ft_swap_first_2(list);
+}
+
+void ft_merge(t_num_list *lista, t_num_list *listb)
+{
+	int	rotate_count;
+	int	initial_lista_count;
+
+	rotate_count = 0;
+	initial_lista_count = lista->number_elements;
+	while (listb->number_elements != 0)
+	{
+		if (lista->elements[0] < listb->elements[0] && rotate_count < initial_lista_count)
+		{
+			ft_rotate_elements(lista, 1);
+			rotate_count++;
+		} 
+		else 
+		{
+			ft_push(listb, lista);
+			ft_rotate_elements(lista, 1);
+		}	
+	}
+	while (lista->elements[0] != lista->min_value)
+		ft_rotate_elements(lista, 1);
+}
+
+int	ft_read_elements(t_num_list *lista, t_num_list *listb, \
+		int argc, char *argv[])
 {
 	int	index;
 
 	(*lista).elements = malloc(sizeof(int) * argc);
 	if (!((*lista).elements))
 		return (0);
-	(*lista).sorted_elements = malloc(sizeof(int) * argc);
-	if (!((*lista).sorted_elements))
+	(*listb).elements = malloc(sizeof(int) * argc);
+	if (!((*listb).elements))
 		return (0);
-	(*lista).identifier = identifier;
-	(*lista).number_elements = argc -1;
-	index = argc ;
+	(*lista).identifier = 'a';
+	listb->identifier = 'b';
+	(*lista).number_elements = argc - 1;
+	listb->number_elements = 0;
+	index = argc;
 	while (index > 1)
 	{
-		ft_printf("in function%d \n", index);
-
 		(*lista).elements[index - 2] = ft_atoi(argv[index - 1]);
-		(*lista).sorted_elements[index - 2] = ft_atoi(argv[index - 1]);
-		ft_printf("value %d:\n", (*lista).elements[index - 1]);
 		index--;
 	}
 	return (1);
@@ -151,6 +213,8 @@ int	ft_read_elements(t_num_list *lista, int argc, char *argv[], char identifier)
 int	main(int argc, char *argv[])
 {
 	t_num_list	lista;
+	t_num_list	listb;
+	int			index;
 
 	if (argc < 2)
 		return (0);
@@ -161,7 +225,28 @@ int	main(int argc, char *argv[])
 	}
 	lista.elements = NULL;
 	
-	ft_read_elements(&lista, argc, argv, 'a');
-	ft_print_list(lista.elements, lista.number_elements);
-	ft_get_list_stats(lista);
+	ft_read_elements(&lista, &listb, argc, argv);
+	ft_get_list_stats(&lista);
+	if (is_sorted_list(lista.elements, lista.number_elements))
+		return (1);
+	index = 0;
+	while (index < argc / 2)
+	{
+		ft_push(&lista, &listb);
+		index++;
+	}
+	ft_sort_less_3(&lista);
+	ft_sort_less_3(&listb);
+	ft_merge(&lista, &listb);
+
+	ft_printf("after merge\n");
+	ft_print_list(lista);
+	ft_printf("list b\n");
+	ft_print_list(listb);
+		return (1);
+	
+	
+	// ft_print_list(lista.elements, lista.number_elements);
+	// ft_reverse_rotate_elements(&lista, 1);
+	// ft_print_list(lista.elements, lista.number_elements);
 }
