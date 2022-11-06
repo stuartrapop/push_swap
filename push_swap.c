@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/06 17:39:00 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/06 20:32:03 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ int	ft_remove_number(t_num_list *list)
 	}
 	list->number_elements--;
 	ft_get_list_stats(list);
-	ft_printf("remove number %d\n", tmp);
 	return (tmp);
 }
 
@@ -81,6 +80,7 @@ void	ft_push(t_num_list *list1, t_num_list *list2)
 	if (list1->number_elements < 1)
 		return ;
 	ft_add_number(list2, ft_remove_number(list1));
+	ft_printf("p%c\n", list2->identifier);
 }
 
 void	ft_rotate_elements(t_num_list *list, int show_instruction)
@@ -162,6 +162,31 @@ void	ft_sort_less_3(t_num_list *list)
 	ft_swap_first_2(list);
 }
 
+int ft_find_position(t_num_list list, int number)
+{
+	int	index;
+
+
+	index = 0;
+	while (index < list.number_elements - 1)
+	{
+		ft_printf("index number %d %d\n", index, number);
+		if (number > list.elements[list.number_elements - 1] && \
+			number < list.elements[0])
+			return (0);
+		if (number < list.elements[0] && \
+			number > list.elements[list.number_elements - 1])
+			return (0);
+		if (number < list.elements[0] && \
+			list.elements[0] == list.min_value)
+			return (0);
+		if (number > list.elements[index] && number < list.elements[index + 1])
+			return (index + 1);
+		index++;
+	}
+	return (-1);
+}
+
 void ft_merge(t_num_list *lista, t_num_list *listb)
 {
 	int	rotate_count;
@@ -230,19 +255,29 @@ int	main(int argc, char *argv[])
 	if (is_sorted_list(lista.elements, lista.number_elements))
 		return (1);
 	index = 0;
-	while (index < argc / 2)
-	{
-		ft_push(&lista, &listb);
-		index++;
-	}
-	ft_sort_less_3(&lista);
-	ft_sort_less_3(&listb);
-	ft_merge(&lista, &listb);
+	ft_printf("index %d\n", index);
 
-	ft_printf("after merge\n");
-	ft_print_list(lista);
-	ft_printf("list b\n");
-	ft_print_list(listb);
+	// if (lista.number_elements <= 3)
+	// {	
+	// 	ft_sort_less_3(&lista);
+	// 	return (1);
+	// }
+
+	// while (index < argc / 2)
+	// {
+	// 	ft_push(&lista, &listb);
+	// 	index++;
+	// }
+	// ft_sort_less_3(&lista);
+	// ft_sort_less_3(&listb);
+	// ft_merge(&lista, &listb);
+ ft_print_list(lista);
+	ft_printf("position of number %d\n", ft_find_position(lista, 5));
+
+	// ft_printf("after merge\n");
+	// ft_print_list(lista);
+	// ft_printf("list b\n");
+	// ft_print_list(listb);
 		return (1);
 	
 	
