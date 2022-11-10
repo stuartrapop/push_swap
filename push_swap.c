@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/10 17:19:48 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/10 17:51:48 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,34 +46,6 @@ int	ft_build_list(t_num_list *lista, t_num_list *listb, \
 	return (1);
 }
 
-int	ft_none_left(t_num_list list, int start, int end)
-{
-	int	index;
-
-	index = 0;
-	while (index < list.number_elements)
-	{
-		if (list.position[index] >= start && list.position[index] <= end)
-			return (0);
-		index++;
-	}
-	return (1);
-}
-
-int	has_space(char *str)
-{
-	int	index;
-
-	index = 0;
-	while (str[index] != '\0')
-	{
-		if (str[index] == ' ')
-			return (1);
-		index++;
-	}
-	return (0);
-}
-
 char	**ft_make_arg_list(int argc, char *argv[])
 {
 	int		index;
@@ -92,36 +64,13 @@ char	**ft_make_arg_list(int argc, char *argv[])
 	return (new_array);
 }
 
-void	delete_list(t_num_list *list)
-{
-	if (list->elements != NULL)
-		free(list->elements);
-	if (list->position != NULL)
-		free(list->elements);
-	if (list->sort_lst != NULL)
-		free(list->elements);
-}
-
-void	delete_str_args(char ***str_args, int num_elements)
-{
-	int	index;
-
-	index = 0;
-	while (index < num_elements)
-	{
-		free((*str_args)[index]);
-		index++;
-	}
-	free(*str_args);
-}
-
 int	ft_error(void)
 {
 	ft_printf("Error\n");
 	return (0);
 }
 
-int ft_push_swap(char ***str_args, int num_elements)
+int	ft_push_swap(char ***str_args, int num_elements)
 {
 	t_num_list	lista;
 	t_num_list	listb;
@@ -131,6 +80,7 @@ int ft_push_swap(char ***str_args, int num_elements)
 		delete_str_args(str_args, num_elements);
 		return (ft_error());
 	}
+	ft_clean_lists(&lista, &listb);
 	ft_build_list(&lista, &listb, num_elements, *str_args);
 	ft_make_sort_list(&lista);
 	ft_make_position_list(&lista, &listb);
@@ -138,11 +88,9 @@ int ft_push_swap(char ***str_args, int num_elements)
 	if (!is_sorted_list(lista.position, lista.number_elements, 'a'))
 	{
 		if (lista.number_elements <= 6)
-		{
 			ft_sort_few(&lista, &listb);
-			return (1);
-		}
-		ft_radix_2(&lista, &listb);
+		else
+			ft_radix_2(&lista, &listb);
 	}
 	delete_list(&lista);
 	delete_list(&listb);

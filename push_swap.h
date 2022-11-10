@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:41 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/10 16:34:57 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/10 17:45:22 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,5 +48,10 @@ void	ft_sort_few(t_num_list *lista, t_num_list *listb);
 void	ft_radix_2(t_num_list *lista, t_num_list *listb);
 void	ft_sort_less_3(t_num_list *list);
 int		ft_none_left(t_num_list list, int start, int end);
+int		has_space(char *str);
+int		ft_none_left(t_num_list list, int start, int end);
+void	delete_str_args(char ***str_args, int num_elements);
+void	delete_list(t_num_list *list);
+void	ft_clean_lists(t_num_list *lista, t_num_list *listb);
 
 #endif

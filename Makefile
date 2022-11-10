@@ -12,8 +12,8 @@ SRCS_NAME = push_swap.c \
 			helpers.c \
 			radix4.c \
 			radix3.c \
-			sort.c
-
+			sort.c \
+			utils.c
 
 SRCS = $(addprefix $(SRCS_PATH)/,$(SRCS_NAME))
 

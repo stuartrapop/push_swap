@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/10 14:53:59 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/10 17:51:34 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,98 +18,63 @@
 #include "ft_printf.h"
 #include <limits.h>
 
-void	ft_make_sort_list(t_num_list *lista)
+void	ft_clean_lists(t_num_list *lista, t_num_list *listb)
 {
-	int	index1;
-	int	index2;
-	int	tmp;
-
-	if ((*lista).number_elements == 0)
-		return ;
-	index1 = 0;
-	while (index1 < lista->number_elements - 1)
-	{
-		index2 = index1 + 1;
-		while (index2 < lista->number_elements)
-		{
-			if (lista->sort_lst[index1] > lista->sort_lst[index2])
-			{
-				tmp = lista->sort_lst[index1];
-				lista->sort_lst[index1] = lista->sort_lst[index2];
-				lista->sort_lst[index2] = tmp;
-			}
-			index2++;
-		}
-		index1++;
-	}
+	lista->elements = NULL;
+	lista->position = NULL;
+	lista->sort_lst = NULL;
+	listb->elements = NULL;
+	listb->position = NULL;
+	listb->sort_lst = NULL;
 }
 
-void	ft_make_position_list(t_num_list *lista, t_num_list *listb)
+void	delete_list(t_num_list *list)
 {
-	int	index1;
-	int	index2;
-
-	if ((*lista).number_elements == 0 || (*lista).sort_lst == NULL)
-		return ;
-	lista->position = malloc(sizeof(int) * lista->number_elements);
-	if (lista->position == NULL)
-		return ;
-	listb->position = malloc(sizeof(int) * lista->number_elements);
-	if (listb->position == NULL)
-		return ;
-	index1 = 0;
-	while (index1 < lista->number_elements)
-	{
-		index2 = 0;
-		while (index2 < lista->number_elements)
-		{
-			if (lista->elements[index1] == lista->sort_lst[index2])
-			{
-				lista->position[index1] = index2 + 1;
-			}
-			index2++;
-		}
-		index1++;
-	}
+	if (list->elements != NULL)
+		free(list->elements);
+	if (list->position != NULL)
+		free(list->position);
+	if (list->sort_lst != NULL)
+		free(list->sort_lst);
 }
 
-void	ft_get_list_stats(t_num_list *list)
+void	delete_str_args(char ***str_args, int num_elements)
 {
-	int	min;
-	int	max;
 	int	index;
 
-	if ((*list).number_elements == 0 || (*list).elements == NULL)
-		return ;
 	index = 0;
-	min = (*list).position[0];
-	max = (*list).position[0];
-	while (index < (*list).number_elements)
+	while (index < num_elements)
 	{
-		if (min > (*list).position[index])
-			min = (*list).position[index];
-		if (max < (*list).position[index])
-			max = (*list).position[index];
+		free((*str_args)[index]);
 		index++;
 	}
-	(*list).max_value = max;
-	(*list).min_value = min;
+	free(*str_args);
 }
 
-void	ft_compare_swap(t_num_list *list, char direction, int show_instruction)
+int	ft_none_left(t_num_list list, int start, int end)
 {
-	if (direction == 'a')
+	int	index;
+
+	index = 0;
+	while (index < list.number_elements)
 	{
-		if (list->elements[0] > list->elements[1])
-			ft_swap_first_2(list, show_instruction);
-		return ;
+		if (list.position[index] >= start && list.position[index] <= end)
+			return (0);
+		index++;
 	}
-	if (list->elements[0] < list->elements[1])
-		ft_swap_first_2(list, show_instruction);
+	return (1);
 }
 
-void	ft_merge(t_num_list *lista, t_num_list *listb)
+int	has_space(char *str)
 {
-	while (listb->number_elements != 0)
-		ft_push(listb, lista);
+	int	index;
+
+	index = 0;
+	while (str[index] != '\0')
+	{
+		if (str[index] == ' ')
+			return (1);
+		index++;
+	}
+	return (0);
 }
