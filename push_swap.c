@@ -6,7 +6,7 @@
 /*   By: srapopor <srapopor@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 15:55:57 by srapopor          #+#    #+#             */
-/*   Updated: 2022/11/09 21:18:42 by srapopor         ###   ########.fr       */
+/*   Updated: 2022/11/10 17:19:48 by srapopor         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,256 +18,35 @@
 #include "ft_printf.h"
 #include <limits.h>
 
-void	ft_make_sort_list(t_num_list *lista)
-{
-	int	index1;
-	int	index2;
-	int	tmp;
-
-	if ((*lista).number_elements == 0)
-		return ;
-	index1 = 0;
-	while (index1 < lista->number_elements - 1)
-	{
-		index2 = index1 + 1;
-		while (index2 < lista->number_elements)
-		{
-			if (lista->sort_lst[index1] > lista->sort_lst[index2])
-			{
-				tmp = lista->sort_lst[index1];
-				lista->sort_lst[index1] = lista->sort_lst[index2];
-				lista->sort_lst[index2] = tmp;
-			}
-			index2++;
-		}
-		index1++;
-	}
-}
-
-void	ft_make_position_list(t_num_list *lista, t_num_list *listb)
-{
-	int	index1;
-	int	index2;
-
-	if ((*lista).number_elements == 0 || (*lista).sort_lst == NULL)
-		return ;
-	lista->position = malloc(sizeof(int) * lista->number_elements);
-	if (lista->position == NULL)
-		return ;
-	listb->position = malloc(sizeof(int) * lista->number_elements);
-	if (listb->position == NULL)
-		return ;
-	index1 = 0;
-	while (index1 < lista->number_elements)
-	{
-		index2 = 0;
-		while (index2 < lista->number_elements)
-		{
-			if (lista->elements[index1] == lista->sort_lst[index2])
-			{
-				lista->position[index1] = index2 + 1;
-			}
-			index2++;
-		}
-		index1++;
-	}
-}
-
-void	ft_get_list_stats(t_num_list *list)
-{
-	int	min;
-	int	max;
-	int	index;
-
-	if ((*list).number_elements == 0 || (*list).elements == NULL)
-		return ;
-	index = 0;
-	min = (*list).position[0];
-	max = (*list).position[0];
-	while (index < (*list).number_elements)
-	{
-		if (min > (*list).position[index])
-			min = (*list).position[index];
-		if (max < (*list).position[index])
-			max = (*list).position[index];
-		index++;
-	}
-	(*list).max_value = max;
-	(*list).min_value = min;
-}
-
-void	ft_add_number(t_num_list *list, int new_number)
+int	ft_build_list(t_num_list *lista, t_num_list *listb, \
+		int num_elements, char *str_array[])
 {
 	int	index;
 
-	index = list->number_elements;
-	while (index > 0)
-	{
-		list->position[index] = list->position[index - 1];
-		index--;
-	}
-	list->position[0] = new_number;
-	list->number_elements++;
-	ft_get_list_stats(list);
-}
-
-int	ft_remove_number(t_num_list *list)
-{
-	int	index;
-	int	tmp;
-
-	index = 0;
-	tmp = list->position[0];
-	while (index < list->number_elements - 1)
-	{
-		list->position[index] = list->position[index + 1];
-		index++;
-	}
-	list->number_elements--;
-	ft_get_list_stats(list);
-	return (tmp);
-}
-
-void	ft_push(t_num_list *list1, t_num_list *list2)
-{
-	if (list1 == NULL || list2 == NULL)
-		return ;
-	if (list1->number_elements < 1)
-		return ;
-	ft_add_number(list2, ft_remove_number(list1));
-	ft_printf("p%c\n", list2->identifier);
-}
-
-void	ft_rotate_elements(t_num_list *list, int show_instruction)
-{
-	int	tmp;
-	int	index;
-
-	index = 0;
-	if ((*list).number_elements == 0 || (*list).position == NULL)
-		return ;
-	tmp = (*list).position[0];
-	while (index < (*list).number_elements - 1)
-	{
-		(*list).position[index] = (*list).position[index + 1];
-		index++;
-	}
-	(*list).position[(*list).number_elements - 1] = tmp;
-	if (show_instruction)
-		ft_printf("r%c\n", (*list).identifier);
-}
-
-void	ft_rotate_both(t_num_list *list1, t_num_list *list2)
-{
-	ft_rotate_elements(list1, 0);
-	ft_rotate_elements(list2, 0);
-	ft_printf("rr\n");
-}
-
-void	ft_reverse_rotate_elements(t_num_list *list, int show_instruction)
-{
-	int	tmp;
-	int	index;
-
-	if ((*list).number_elements == 0 || (*list).position == NULL)
-		return ;
-	tmp = (*list).position[(*list).number_elements - 1];
-	index = (*list).number_elements - 1;
-	while (index > 0)
-	{
-		(*list).position[index] = (*list).position[index - 1];
-		index--;
-	}
-	(*list).position[0] = tmp;
-	if (show_instruction)
-		ft_printf("rr%c\n", (*list).identifier);
-}
-
-void	ft_reverse_rotate_both(t_num_list *list1, t_num_list *list2)
-{
-	ft_reverse_rotate_elements(list1, 0);
-	ft_reverse_rotate_elements(list2, 0);
-	ft_printf("rrr\n");
-}
-
-void	ft_swap_first_2(t_num_list *list, int show_instruction)
-{
-	int	tmp;
-
-	if (list == NULL)
-		return ;
-	if (list->number_elements < 2)
-		return ;
-	tmp = list->position[0];
-	list->position[0] = list->position[1];
-	list->position[1] = tmp;
-	if (show_instruction)
-		ft_printf("s%c\n", list->identifier);
-}
-
-void	ft_sort_less_3(t_num_list *list)
-{
-	if (list->identifier == 'a')
-	{
-		if (list->position[0] == list->max_value)
-			ft_rotate_elements(list, 1);
-		if (is_sorted_list(list->position, list->number_elements, 'a'))
-			return ;
-		if (list->position[1] == list->max_value)
-			ft_reverse_rotate_elements(list, 1);
-		if (is_sorted_list(list->position, list->number_elements, 'a'))
-			return ;
-		ft_swap_first_2(list, 1);
-		return ;
-	}
-	if (list->position[0] == list->min_value)
-		ft_rotate_elements(list, 1);
-	if (is_sorted_list(list->position, list->number_elements, 'd'))
-		return ;
-	if (list->position[1] == list->min_value)
-		ft_reverse_rotate_elements(list, 1);
-	if (is_sorted_list(list->position, list->number_elements, 'd'))
-		return ;
-	ft_swap_first_2(list, 1);
-}
-
-
-
-void ft_merge(t_num_list *lista, t_num_list *listb)
-{
-	while (listb->number_elements != 0)
-		ft_push(listb, lista);
-}
-
-int	ft_read_elements(t_num_list *lista, t_num_list *listb, \
-		int argc, char *argv[])
-{
-	int	index;
-
-	(*lista).elements = malloc(sizeof(int) * argc);
+	(*lista).elements = malloc(sizeof(int) * num_elements);
 	if (!((*lista).elements))
 		return (0);
-	(*listb).elements = malloc(sizeof(int) * argc);
+	(*listb).elements = malloc(sizeof(int) * num_elements);
 	if (!((*listb).elements))
 		return (0);
-	(*lista).sort_lst = malloc(sizeof(int) * argc);
+	(*lista).sort_lst = malloc(sizeof(int) * num_elements);
 	if (!((*lista).sort_lst))
 		return (0);
 	(*lista).identifier = 'a';
 	listb->identifier = 'b';
-	(*lista).number_elements = argc - 1;
+	(*lista).number_elements = num_elements;
 	listb->number_elements = 0;
-	index = argc;
-	while (index > 1)
+	index = num_elements - 1;
+	while (index >= 0)
 	{
-		(*lista).elements[index - 2] = ft_atoi(argv[index - 1]);
-		lista->sort_lst[index - 2] = lista->elements[index - 2];
+		(*lista).elements[index] = ft_atoi(str_array[index]);
+		lista->sort_lst[index] = lista->elements[index];
 		index--;
 	}
 	return (1);
 }
 
-int ft_none_left(t_num_list list, int start, int end)
+int	ft_none_left(t_num_list list, int start, int end)
 {
 	int	index;
 
@@ -281,84 +60,117 @@ int ft_none_left(t_num_list list, int start, int end)
 	return (1);
 }
 
-void	ft_bit_sort(t_num_list *lista, t_num_list *listb)
+int	has_space(char *str)
 {
 	int	index;
-	int	tot_elements;
-	int	column;
-	int	bit_shifted;
 
-	column = 0 ;
-	tot_elements = lista->number_elements;
-	while (1)
+	index = 0;
+	while (str[index] != '\0')
 	{
-		index = 0;
-		while (index < tot_elements)
-		{
-			bit_shifted = lista->position[0];
-			bit_shifted = bit_shifted >> column & 1;
-			if (!(bit_shifted))
-				ft_push(lista, listb);
-			else
-				ft_rotate_elements(lista, 1);
-			index++;
-		}
-		ft_merge(lista, listb);
-		if (is_sorted_list(lista->position, lista->number_elements, 'a'))
-			return ;
-		column++;
+		if (str[index] == ' ')
+			return (1);
+		index++;
 	}
+	return (0);
 }
 
-void ft_sort_few(t_num_list *lista, t_num_list *listb)
+char	**ft_make_arg_list(int argc, char *argv[])
 {
-	int tot_elements;
+	int		index;
+	char	**new_array;
+
+	new_array = malloc(sizeof(char *) * (argc - 1 + 1));
+	if (!new_array)
+		return (NULL);
+	index = 0;
+	while (index < argc)
 	{
-		tot_elements = lista->number_elements;
-		while (!ft_none_left(*lista, 0, tot_elements / 2))
-		{
-			if (lista->position[0] <= tot_elements / 2)
-				ft_push(lista, listb);
-			else
-				ft_rotate_elements(lista, 1);
-		}
-		ft_sort_less_3(lista);
-		ft_sort_less_3(listb);
-		ft_print_list(lista->position, lista->number_elements);
-		ft_printf("list b\n");
-		ft_print_list(listb->position, listb->number_elements);
-		ft_merge(lista, listb);
-		ft_printf("after merge b\n");
-		ft_print_list(lista->position, lista->number_elements);
-		ft_printf("list b\n");
-		ft_print_list(listb->position, listb->number_elements);
+		new_array[index - 1] = ft_strdup(argv[index]);
+		index++;
 	}
+	new_array[index] = NULL;
+	return (new_array);
 }
 
-int	main(int argc, char *argv[])
+void	delete_list(t_num_list *list)
+{
+	if (list->elements != NULL)
+		free(list->elements);
+	if (list->position != NULL)
+		free(list->elements);
+	if (list->sort_lst != NULL)
+		free(list->elements);
+}
+
+void	delete_str_args(char ***str_args, int num_elements)
+{
+	int	index;
+
+	index = 0;
+	while (index < num_elements)
+	{
+		free((*str_args)[index]);
+		index++;
+	}
+	free(*str_args);
+}
+
+int	ft_error(void)
+{
+	ft_printf("Error\n");
+	return (0);
+}
+
+int ft_push_swap(char ***str_args, int num_elements)
 {
 	t_num_list	lista;
 	t_num_list	listb;
 
-	if (argc < 2)
-		return (0);
-	if (!valid_arguments(argc, argv))
+	if (!valid_arguments(num_elements, *str_args))
 	{
-		ft_printf("Error\n");
-		return (0);
+		delete_str_args(str_args, num_elements);
+		return (ft_error());
 	}
-	ft_read_elements(&lista, &listb, argc, argv);
+	ft_build_list(&lista, &listb, num_elements, *str_args);
 	ft_make_sort_list(&lista);
 	ft_make_position_list(&lista, &listb);
 	ft_get_list_stats(&lista);
-	if (is_sorted_list(lista.position, lista.number_elements, 'a'))
-		return (1);
-	if (lista.number_elements <= 6)
+	if (!is_sorted_list(lista.position, lista.number_elements, 'a'))
 	{
-		ft_sort_few(&lista, &listb);
-		return (1);
+		if (lista.number_elements <= 6)
+		{
+			ft_sort_few(&lista, &listb);
+			return (1);
+		}
+		ft_radix_2(&lista, &listb);
 	}
-	ft_bit_sort(&lista, &listb);
-	// ft_print_list(lista.position, lista.number_elements);
+	delete_list(&lista);
+	delete_list(&listb);
+	delete_str_args(str_args, num_elements);
 	return (1);
+}
+
+int	main(int argc, char *argv[])
+{
+	char		**str_args;
+	int			num_elements;
+
+	if (argc < 2)
+		return (0);
+	num_elements = 0;
+	if (has_space(argv[1]))
+	{
+		if (argc > 2)
+			return (ft_error());
+		str_args = ft_split(argv[1], ' ');
+		while (str_args[num_elements] != NULL)
+			num_elements++;
+	}
+	else
+	{
+		str_args = ft_make_arg_list(argc, argv);
+		while (str_args[num_elements] != NULL)
+			num_elements++;
+	}
+	ft_push_swap(&str_args, num_elements);
 }

@@ -4,7 +4,15 @@ SRCS_PATH =./
 
 OBJS_PATH = ./objects
 
-SRCS_NAME = push_swap.c push_swap_util.c  ft_printf.c ft_printf_utils.c 
+SRCS_NAME = push_swap.c \
+			push_swap_util.c \
+			ft_printf.c \
+			ft_printf_utils.c \
+			commands.c \
+			helpers.c \
+			radix4.c \
+			radix3.c \
+			sort.c
 
 
 SRCS = $(addprefix $(SRCS_PATH)/,$(SRCS_NAME))
