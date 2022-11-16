@@ -10,8 +10,6 @@ SRCS_NAME = push_swap.c \
 			ft_printf_utils.c \
 			commands.c \
 			helpers.c \
-			radix4.c \
-			radix3.c \
 			sort.c \
 			utils.c
 
@@ -39,11 +37,12 @@ ${NAME} : ${OBJS}
 all : ${NAME}
 
 clean :
-	rm -f ${OBJS} $(OBJS_BONUS)
+	rm -f ${OBJS}
 	$(MAKE) -C libft clean
 
 fclean : clean
 	rm -f ${NAME}
+	rm libft.a
 	$(MAKE) -C libft fclean
 re : fclean all
 
